@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" >
+    <title>Document</title>
+</head>
+<body>
+    <h1>ROCK PAPER SCISSORS</h1>
+    <div id="wrapper">
+        <form action="" id="roundForm">
+            <input type="text" name="roundselect" placeholder="How many rounds?">
+            <button type="submit" id="gobutton">GO</button>
+        </form>
+
+        <div id="choices"></div>
+        
+    </div>
+
+    <div id="botReport"><a href="pages/landing.html">My website</a>Credit to<a href="https://www.vecteezy.com/">https://www.vecteezy.com/</a>for game icons</div>
+    
+    <script>
+    
+        
+        const roundForm = document.getElementById("roundForm");
+        const rAnnounce = document.createElement('h2');
+        const choices = document.getElementById("choices");
+        const rChoice = document.createElement('button');
+        const pChoice = document.createElement('button');
+        const sChoice = document.createElement('button');
+        const resultText = document.createElement('p');
+        const restart = document.createElement('button');
+        const botReport = document.getElementById('botReport');
+        const title = document.querySelector("h1");
+        restart.id = "restart";
+        const wrapper = document.getElementById('wrapper');
+        const input = document.querySelector("input");
+        const rockImage = new Image();
+        rockImage.src = "img/rock.png";
+        const paperImage = new Image();
+        paperImage.src = "img/paper.png";
+        const scissorsImage = new Image();
+        scissorsImage.src = "img/scissors.png";
+        const winSong = new Audio();
+        winSong.src = "audio/winSong.mp3";
+        const loseSong = new Audio();
+        loseSong.src = "audio/loseSong.mp3";
+        const tieSong = new Audio();
+        tieSong.src = "audio/tieSong.mp3";
+
+        let firstTime = true;
+        restart.textContent = "RESTART";
+        
+        
+        restart.addEventListener('click', () => {
+            title.textContent = "ROCK PAPER SCISSORS";
+            title.style.color = "white";
+            rAnnounce.remove();
+            restart.remove();
+            wrapper.appendChild(roundForm);
+            input.value = "";
+            botReport.style.color = "white";
+            botReport.innerHTML = '<a href="pages/landing.html">My website</a>Credit to<a href="https://www.vecteezy.com/">https://www.vecteezy.com/</a>for game icons';
+
+        });
+        let rounds = 0;
+            
+        
+
+        function playRound(myans, botans){
+            let result = "";
+            if (myans === "rock") {
+                if (botans === "paper") {
+                    result = "lose";
+                } else if (botans ==="scissors") {
+                    result = "win";
+                } else result = "tie";
+
+            } else if (myans === "paper") {
+                if (botans === "scissors") {
+                    result = "lose";
+                } else if (botans ==="rock") {
+                    result = "win";
+                } else result = "tie";
+
+            } else {
+                if (botans === "rock") {
+                    result = "lose";
+                } else if (botans ==="paper") {
+                    result = "win"
+                } else result = "tie";
+            }
+
+            if (result === 'win') {
+                mywins++;
+                botReport.style.color = "hsl(120, 57%, 45%)";
+                botReport.textContent = `You played ${myans}, bot played ${botans}, nice one!`;
+            } else if (result === 'lose') {
+                botwins++;
+                botReport.style.color = "hsl(0,100%,50%)";
+                botReport.textContent = `You played ${myans}, bot played ${botans}, oh no!`;
+            } else {
+                botReport.style.color = "white";
+                botReport.textContent = `You both played ${myans}, tie!`;
+            }
+            rAnnounce.textContent = `${mywins} - ${botwins}`;
+
+            if (mywins + botwins === rounds || Math.abs(mywins-botwins) > Math.abs(mywins + botwins - rounds)) { //fix this math
+            endGame();
+        }
+
+        }
+
+        function getComputerChoice(){
+            let botans = Math.random()*3;
+            if (botans > 2) return "rock";
+            else if (botans > 1) return "paper";
+            else return "scissors";
+        }
+
+        function startGame() {
+            mywins = 0;
+            botwins = 0;
+            rChoice.id = "rock";
+            choices.appendChild(rChoice);
+            rChoice.appendChild(rockImage);
+            pChoice.id = "paper";
+            choices.appendChild(pChoice);
+            pChoice.appendChild(paperImage);
+            sChoice.id = "scissors";
+            choices.appendChild(sChoice);
+            sChoice.appendChild(scissorsImage);
+            wrapper.appendChild(rAnnounce);
+            rAnnounce.textContent = '0 - 0';
+            
+            roundForm.remove();
+            if (firstTime){
+                const buttons = document.querySelectorAll('#choices button');
+                    buttons.forEach((button) => {
+                        button.addEventListener('click', () => playRound(button.id, getComputerChoice()));
+                        console.log('hi')
+                    })
+                firstTime = false;
+            }
+        }
+
+        function endGame() {
+            const buttons = document.querySelectorAll('#choices button');
+            buttons.forEach((button) => {
+                button.remove();
+            })
+            wrapper.appendChild(restart);
+
+            if (mywins > botwins) {
+                title.textContent = "VICTORY!";
+                title.style.color = "hsl(120, 57%, 65%)";
+                winSong.play();
+            } else if (botwins > mywins) {
+                title.textContent = "loss :(";
+                title.style.color = "hsl(0,100%,50%)";
+                loseSong.play();
+            } else {
+                title.textContent = "Tie!";
+                tieSong.play();
+            }
+            
+
+        }
+
+        roundForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            rounds = document.querySelector('input').value;
+
+            if (isNaN(rounds) || !Number.isInteger(Number(rounds)) || Number(rounds) < 1 ) alert("lil bro picked an invalid number 💀");
+            else {
+                rounds = Number(rounds);
+                startGame();
+            }
+
+        })
+
+        
+
+    </script>
+    
+</body>
+</html>
